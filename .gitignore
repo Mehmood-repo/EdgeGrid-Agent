@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Edge-Agent ignores
+data/raw/
+data/processed/*.csv
+*.ipynb_checkpoints
+__pycache__/
+.env
+*.pyc
+.venv/

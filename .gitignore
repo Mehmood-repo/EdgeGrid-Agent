@@ -224,4 +224,8 @@ data/processed/*.csv
 __pycache__/
 .env
 *.pyc
-.venv/
+.venv/.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/

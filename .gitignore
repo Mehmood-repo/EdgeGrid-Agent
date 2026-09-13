@@ -220,6 +220,8 @@ __marimo__/
 # Edge-Agent ignores
 data/raw/
 data/processed/*.csv
+data/processed/*.parquet
+*.parquet
 *.ipynb_checkpoints
 __pycache__/
 .env

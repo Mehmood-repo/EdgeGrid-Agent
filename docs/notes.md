@@ -1,8 +1,10 @@
 # EdgeGrid-Agent Project Notes & Quick Reference
 
 ## Key Documentation
+- **KDD Cup 2022 Benchmark Research & Ablation Report:** [`docs/kdd_cup_benchmark_research_report.md`](file:///home/ali/projects/EdgeGrid-Agent/docs/kdd_cup_benchmark_research_report.md)
 - **Comprehensive System Architecture Report:** [`docs/system_architecture_report.md`](file:///home/ali/projects/EdgeGrid-Agent/docs/system_architecture_report.md)
 - **Empirical Wake & Adjacent Turbine Study:** [`docs/spatial_wake_analysis_report.md`](file:///home/ali/projects/EdgeGrid-Agent/docs/spatial_wake_analysis_report.md)
+- **Kaggle Cloud GPU Execution Guide:** [`docs/kaggle_execution_guide.md`](file:///home/ali/projects/EdgeGrid-Agent/docs/kaggle_execution_guide.md)
 
 ## Executable Notebooks
 - [`notebooks/01_data_exploration.ipynb`](file:///home/ali/projects/EdgeGrid-Agent/notebooks/01_data_exploration.ipynb): Data cleaning, outage pruning, spline imputation, and parquet serialization.

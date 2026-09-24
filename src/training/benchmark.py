@@ -160,15 +160,36 @@ def run_benchmark(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run EdgeGrid Model Benchmark")
-    parser.add_argument("--epochs", type=int, default=2)
-    parser.add_argument("--batch-size", type=int, default=8)
-    parser.add_argument("--in-len", type=int, default=24)
-    parser.add_argument("--out-len", type=int, default=24)
+    parser.add_argument("--data-path", type=str, default="data/processed/sdwpf_cleaned_243days.parquet", help="Path to parquet dataset")
+    parser.add_argument("--locations-path", type=str, default="data/raw/sdwpf_baidukddcup2022_turb_location.csv", help="Path to turbine locations CSV")
+    parser.add_argument("--epochs", type=int, default=3, help="Training epochs per model")
+    parser.add_argument("--batch-size", type=int, default=8, help="Batch size")
+    parser.add_argument("--in-len", type=int, default=24, help="Input lookback horizon (steps)")
+    parser.add_argument("--out-len", type=int, default=24, help="Forecast horizon (steps)")
+    parser.add_argument("--hidden-dim", type=int, default=32, help="Hidden channel dimension")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
+    parser.add_argument("--train-stride", type=int, default=12, help="Stride between train windows")
+    parser.add_argument("--eval-stride", type=int, default=72, help="Stride between eval windows")
+    parser.add_argument("--device", type=str, default=None, help="Device ('cuda' or 'cpu')")
+    parser.add_argument("--checkpoint-dir", type=str, default="checkpoints/benchmark", help="Directory for checkpoints")
+    parser.add_argument("--output-csv", type=str, default=None, help="Optional path to save results DataFrame as CSV")
     args = parser.parse_args()
 
-    run_benchmark(
+    df_results = run_benchmark(
+        data_path=args.data_path,
+        locations_path=args.locations_path,
         epochs=args.epochs,
         batch_size=args.batch_size,
         in_len=args.in_len,
         out_len=args.out_len,
+        hidden_dim=args.hidden_dim,
+        lr=args.lr,
+        train_stride=args.train_stride,
+        eval_stride=args.eval_stride,
+        device=args.device,
+        checkpoint_dir=args.checkpoint_dir,
     )
+
+    if args.output_csv:
+        df_results.to_csv(args.output_csv, index=False)
+        print(f"Saved benchmark results to {args.output_csv}")

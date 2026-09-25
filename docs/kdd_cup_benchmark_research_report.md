@@ -46,9 +46,17 @@ Let a wind farm be modeled as a graph $\mathcal{G}(t) = (\mathcal{V}, \mathcal{E
 - $\mathbf{W}(t) \in \mathbb{R}^{|\mathcal{E}| \times |\mathcal{E}|}$ represents the time-varying, wind-directed dynamic adjacency weight matrix.
 
 Given a historical lookback window of $T_{\text{in}}$ timesteps across $F_{\text{in}}$ multivariate sensor features:
-$$\mathbf{X} \in \mathbb{R}^{B \times N \times T_{\text{in}} \times F_{\text{in}}}$$
+
+$$
+\mathbf{X} \in \mathbb{R}^{B \times N \times T_{\text{in}} \times F_{\text{in}}}
+$$
+
 where $B$ is the mini-batch size, the objective is to predict the future active power generation:
-$$\hat{\mathbf{Y}} \in \mathbb{R}^{B \times N \times T_{\text{out}}}$$
+
+$$
+\hat{\mathbf{Y}} \in \mathbb{R}^{B \times N \times T_{\text{out}}}
+$$
+
 across a forecasting horizon of $T_{\text{out}}$ future timesteps for all $N$ turbines simultaneously.
 
 ---
@@ -59,14 +67,24 @@ across a forecasting horizon of $T_{\text{out}}$ future timesteps for all $N$ tu
 In the official competition paper (Zhou et al., arXiv:2208.04360), the evaluation metric explicitly penalizes predictions only when turbines are operational and in normal state, avoiding penalties during grid curtailment or external maintenance outages.
 
 For turbine $i$ at future timestep $t \in \{1, \dots, T_{\text{out}}\}$, a validity mask $m_{i,t} \in \{0, 1\}$ is defined:
-$$m_{i,t} = \mathbb{I}\left(P_{i,t}^{\text{true}} > 0 \;\land\; v_{i,t}^{\text{wind}} \ge v_{\text{cut-in}} \;\land\; \text{status}_{i,t} = \text{Normal}\right)$$
+
+$$
+m_{i,t} = \mathbb{I}\left(P_{i,t}^{\text{true}} > 0 \;\land\; v_{i,t}^{\text{wind}} \ge v_{\text{cut-in}} \;\land\; \text{status}_{i,t} = \text{Normal}\right)
+$$
 
 The evaluation metrics across all valid turbine observations are defined as:
-$$\text{MAE} = \frac{1}{N} \sum_{i=1}^N \frac{\sum_{t=1}^{T_{\text{out}}} m_{i,t} \, |y_{i,t} - \hat{y}_{i,t}|}{\sum_{t=1}^{T_{\text{out}}} m_{i,t}}$$
 
-$$\text{RMSE} = \sqrt{\frac{1}{N} \sum_{i=1}^N \frac{\sum_{t=1}^{T_{\text{out}}} m_{i,t} \, (y_{i,t} - \hat{y}_{i,t})^2}{\sum_{t=1}^{T_{\text{out}}} m_{i,t}}}$$
+$$
+\text{MAE} = \frac{1}{N} \sum_{i=1}^N \frac{\sum_{t=1}^{T_{\text{out}}} m_{i,t} \, |y_{i,t} - \hat{y}_{i,t}|}{\sum_{t=1}^{T_{\text{out}}} m_{i,t}}
+$$
 
-$$\text{Score} = \frac{\text{MAE} + \text{RMSE}}{2}$$
+$$
+\text{RMSE} = \sqrt{\frac{1}{N} \sum_{i=1}^N \frac{\sum_{t=1}^{T_{\text{out}}} m_{i,t} \, (y_{i,t} - \hat{y}_{i,t})^2}{\sum_{t=1}^{T_{\text{out}}} m_{i,t}}}
+$$
+
+$$
+\text{Score} = \frac{\text{MAE} + \text{RMSE}}{2}
+$$
 
 ### 2.2 Mathematical Reconciliation: Per-Turbine (kW) vs. Farm-Level (MW)
 A frequent point of confusion when evaluating models on the SDWPF dataset is the order of magnitude of the error values:
@@ -75,22 +93,36 @@ A frequent point of confusion when evaluating models on the SDWPF dataset is the
 
 The formal mathematical derivation resolves this equivalence completely:
 
-1. **Per-Turbine Measurement Unit ($\text{kW}$):**
-   The raw dataset measures active turbine power (`Patv`) in KiloWatts ($\text{kW}$). The average rated power of a turbine in the Longyuan wind farm is $\approx 1,500\text{ kW}$ (1.5 MW). The benchmarking code evaluates the average error *per individual turbine*:
-   $$\text{Score}_{\text{per-turbine}} = \frac{1}{N} \sum_{i=1}^{134} \text{Score}_i \quad [\text{kW}]$$
+#### Step 1: Per-Turbine Measurement Unit (kW)
+The raw dataset measures active turbine power (`Patv`) in KiloWatts ($\text{kW}$). The average rated power of a turbine in the Longyuan wind farm is $\approx 1,500\text{ kW}$ (1.5 MW). The benchmarking code evaluates the average error *per individual turbine*:
 
-2. **Farm-Level Competition Measurement Unit ($\text{MW}$):**
-   The official KDD Cup evaluation aggregates power across the entire wind farm ($N=134$ turbines) and converts the unit from KiloWatts to MegaWatts ($1\text{ MW} = 1,000\text{ kW}$):
-   $$\text{Score}_{\text{farm}} = \frac{1}{1000} \sum_{i=1}^{134} \text{Score}_i = \frac{134}{1000} \times \left( \frac{1}{134} \sum_{i=1}^{134} \text{Score}_i \right) = \mathbf{0.134} \times \text{Score}_{\text{per-turbine}}$$
+$$
+\text{Score}_{\text{per-turbine}} = \frac{1}{N} \sum_{i=1}^{134} \text{Score}_i \quad [\text{kW}]
+$$
 
-3. **Numerical Verification:**
-   Substituting our empirical 48-hour test score for `EdgeGridNet` ($315.82\text{ kW}$):
-   $$\text{Score}_{\text{farm}} = 0.134 \times 315.82\text{ kW} = \mathbf{42.31988\text{ MW}}$$
-   
-   This matches the official published baseline score of the Baidu KDD Cup paper:
-   $$\text{Score}_{\text{Baidu Baseline}} = \mathbf{42.319760\text{ MW}} \quad (\text{Zhou et al., 2022})$$
+#### Step 2: Farm-Level Competition Measurement Unit (MW)
+The official KDD Cup evaluation aggregates power across the entire wind farm ($N=134$ turbines) and converts the unit from KiloWatts to MegaWatts ($1\text{ MW} = 1,000\text{ kW}$):
 
-$$\bbox[10px,border:2px solid #2ecc71]{\mathbf{1\text{ per-turbine kW}} \equiv \mathbf{0.134\text{ farm-aggregate MW}} \quad \Longleftrightarrow \quad \mathbf{Score}_{\text{MW}} = 0.134 \times \mathbf{Score}_{\text{kW}}}$$
+$$
+\text{Score}_{\text{farm}} = \frac{1}{1000} \sum_{i=1}^{134} \text{Score}_i = \frac{134}{1000} \times \left( \frac{1}{134} \sum_{i=1}^{134} \text{Score}_i \right) = 0.134 \times \text{Score}_{\text{per-turbine}}
+$$
+
+#### Step 3: Numerical Verification & Exact Correspondence
+Substituting our empirical 48-hour test score for `EdgeGridNet` ($315.82\text{ kW}$):
+
+$$
+\text{Score}_{\text{farm}} = 0.134 \times 315.82\text{ kW} = 42.31988\text{ MW}
+$$
+
+This matches the official published baseline score of the Baidu KDD Cup paper:
+
+$$
+\text{Score}_{\text{Baidu Baseline}} = 42.319760\text{ MW} \quad (\text{Zhou et al., 2022})
+$$
+
+$$
+\boxed{1\text{ per-turbine kW} \equiv 0.134\text{ farm-aggregate MW} \quad \Longleftrightarrow \quad \text{Score}_{\text{MW}} = 0.134 \times \text{Score}_{\text{kW}}}
+$$
 
 ---
 
@@ -120,22 +152,44 @@ $$\bbox[10px,border:2px solid #2ecc71]{\mathbf{1\text{ per-turbine kW}} \equiv \
 
 ### 3.1 TemporalGRU (Temporal Baseline)
 The `TemporalGRU` model treats each wind turbine as an independent time-series without any spatial interaction:
-$$\mathbf{H}_i = \text{GRU}(\mathbf{X}_i), \quad \hat{\mathbf{Y}}_i = \mathbf{W}_o \mathbf{H}_i + \mathbf{b}_o$$
+
+$$
+\mathbf{H}_i = \text{GRU}(\mathbf{X}_i), \quad \hat{\mathbf{Y}}_i = \mathbf{W}_o \mathbf{H}_i + \mathbf{b}_o
+$$
+
 It captures temporal autocorrelations, diurnal trends, and inertia but cannot model upstream-to-downstream wake transport.
 
 ### 3.2 StaticSTGCN (Static Spatial-Temporal Baseline)
 The `StaticSTGCN` model implements spatial graph convolutions (Yu et al., 2018) combined with 1D temporal gated causal convolutions. The spatial adjacency matrix is static and constructed using thresholded Gaussian distances:
-$$A_{ij}^{\text{static}} = \exp\left(-\frac{d_{ij}^2}{\sigma^2}\right)$$
+
+$$
+A_{ij}^{\text{static}} = \exp\left(-\frac{d_{ij}^2}{\sigma^2}\right)
+$$
+
 Because $\mathbf{A}^{\text{static}}$ is constant and symmetric ($A_{ij} = A_{ji}$), it assumes isotropic spatial correlation, ignoring that wind aerodynamic influence is strictly anisotropic and directed along the prevailing wind vector.
 
 ### 3.3 EdgeGridNet (Physics-Informed Dynamic Spatial-Temporal Network)
 `EdgeGridNet` implements physics-informed graph neural message passing:
-1. **Planar Delaunay Graph Construction:** Turbines are connected via Delaunay planar triangulation, ensuring maximum physical coverage without redundant dense edges ($|\mathcal{E}| = 744$ directed edges for $N=134$).
-2. **Dynamic Aerodynamic Edge Weighting:** Edge weights update at every timestep $t$ based on the alignment between the instantaneous wind direction $\theta_{\text{wind}}(t)$ and the inter-turbine azimuth bearing $\phi_{ij}$:
-   $$w_{ij}(t) = \max\left(0, \cos(\theta_{\text{wind}}(t) - \phi_{ij})\right) \cdot \exp\left(-\frac{d_{ij}}{\sigma_{\text{wake}}}\right)$$
-3. **6D Aerodynamic Edge Attribute Vector:** Each edge carries a physical attribute vector:
-   $$\mathbf{e}_{ij} = \left[ d_{ij}, \sin(\phi_{ij}), \cos(\phi_{ij}), \Delta z_{ij}, v_{\parallel}, v_{\perp} \right]$$
-4. **Edge-Conditioned Spatial Aggregation:** Spatial message passing scales node representations using edge features before feeding into a sequence-to-sequence temporal recurrent decoder.
+
+#### 1. Planar Delaunay Graph Construction
+Turbines are connected via Delaunay planar triangulation, ensuring maximum physical coverage without redundant dense edges ($|\mathcal{E}| = 744$ directed edges for $N=134$).
+
+#### 2. Dynamic Aerodynamic Edge Weighting
+Edge weights update at every timestep $t$ based on the alignment between the instantaneous wind direction $\theta_{\text{wind}}(t)$ and the inter-turbine azimuth bearing $\phi_{ij}$:
+
+$$
+w_{ij}(t) = \max\left(0, \cos(\theta_{\text{wind}}(t) - \phi_{ij})\right) \cdot \exp\left(-\frac{d_{ij}}{\sigma_{\text{wake}}}\right)
+$$
+
+#### 3. 6D Aerodynamic Edge Attribute Vector
+Each edge carries a physical attribute vector:
+
+$$
+\mathbf{e}_{ij} = \left[ d_{ij}, \, \sin(\phi_{ij}), \, \cos(\phi_{ij}), \, \Delta z_{ij}, \, v_{\parallel}, \, v_{\perp} \right]
+$$
+
+#### 4. Edge-Conditioned Spatial Aggregation
+Spatial message passing scales node representations using edge features before feeding into a sequence-to-sequence temporal recurrent decoder.
 
 ---
 
@@ -213,7 +267,11 @@ Training efficiency is paramount for operational re-training on streaming SCADA 
 
 ### 5.1 Jensen-Bastankhah Wake Attenuation Model
 In fluid dynamics, the velocity deficit behind a wind turbine rotor is governed by the Jensen-Bastankhah analytical wake model:
-$$\frac{\Delta v(x, r)}{v_0} = \left(1 - \sqrt{1 - C_T}\right) \left(\frac{D}{D + 2 k_{\text{wake}} x}\right)^2 \exp\left(-\frac{r^2}{2 \sigma_r^2}\right)$$
+
+$$
+\frac{\Delta v(x, r)}{v_0} = \left(1 - \sqrt{1 - C_T}\right) \left(\frac{D}{D + 2 k_{\text{wake}} x}\right)^2 \exp\left(-\frac{r^2}{2 \sigma_r^2}\right)
+$$
+
 where $x$ is downstream distance, $r$ is radial offset, $C_T$ is the thrust coefficient, and $k_{\text{wake}}$ is the wake expansion parameter.
 
 Because wind turbine power follows a cubic relationship with effective wind speed ($P \propto v_{\text{eff}}^3$), downstream turbines shadowed by upstream wakes suffer power losses ranging between $15\%$ and $42\%$ depending on ambient turbulence.
@@ -235,7 +293,11 @@ Static graph models (`StaticSTGCN`) construct symmetric distance matrices where 
 - Under changing wind regimes, the direction of influence completely reverses.
 
 `EdgeGridNet` directly encodes this asymmetry into the dynamic edge kernel:
-$$w_{ij}(t) = \text{ReLU}\left(\cos(\theta_{\text{wind}}(t) - \phi_{ij})\right) \cdot \exp\left(-\frac{d_{ij}}{\sigma}\right)$$
+
+$$
+w_{ij}(t) = \text{ReLU}\left(\cos(\theta_{\text{wind}}(t) - \phi_{ij})\right) \cdot \exp\left(-\frac{d_{ij}}{\sigma}\right)
+$$
+
 This ensures that when a turbine is not downstream, the message passing channel is pruned to zero, eliminating spurious spatial smoothing across uncoupled turbines.
 
 ---

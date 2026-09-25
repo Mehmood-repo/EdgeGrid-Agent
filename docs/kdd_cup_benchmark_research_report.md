@@ -1,6 +1,6 @@
 # Spatial-Dynamic Wind Power Forecasting: Benchmark Evaluation, Unit Reconciliation, and Cross-Architecture Comparative Evaluation on the Baidu KDD Cup 2022 (SDWPF)
 
-**Author:** EdgeGrid Research Team & Antigravity Engineering  
+**Author:** EdgeGrid Research Team  
 **Date:** September 2026  
 **Dataset:** Baidu KDD Cup 2022 Spatial Dynamic Wind Power Forecasting (SDWPF)  
 **Hardware Environment:** NVIDIA Tesla T4 GPU (Kaggle Cloud Platform, CUDA 12.x)  

@@ -31,7 +31,13 @@ Incident Wind Field (U, θ_wind)
 ```
 
 ### The Fundamental Theoretical Gap
-Standard Spatio-Temporal Graph Neural Networks (ST-GNNs)—widely popularized in traffic and sensor network forecasting—predominantly assume **static, symmetric, Euclidean distance-based adjacency matrices** ($\mathbf{A} \in \mathbb{R}^{N \times N}$ where $A_{ij} = A_{ji} = \exp(-d_{ij}^2/\sigma^2)$). In fluid-driven atmospheric environments, this assumption introduces severe physical and computational flaws:
+Standard Spatio-Temporal Graph Neural Networks (ST-GNNs)—widely popularized in traffic and sensor network forecasting—predominantly assume **static, symmetric, Euclidean distance-based adjacency matrices**:
+
+$$
+\mathbf{A} \in \mathbb{R}^{N \times N}, \quad A_{ij} = A_{ji} = \exp\left(-\frac{d_{ij}^2}{\sigma^2}\right)
+$$
+
+In fluid-driven atmospheric environments, this assumption introduces severe physical and computational flaws:
 
 1. **Directional Asymmetry:** When wind blows from turbine $i$ to turbine $j$ ($\theta_{\text{wind}} \approx \phi_{ij}$), upstream turbine $i$ extracts kinetic energy, creating a turbulent downstream velocity deficit on turbine $j$. Conversely, downwind turbine $j$ exerts negligible upstream aerodynamic wake deficit on turbine $i$.
 2. **Temporal Non-Stationarity:** As meteorological regimes shift, the direction and topology of physical interaction continually invert. Symmetric static graphs cannot capture time-varying, wind-directed information flows.

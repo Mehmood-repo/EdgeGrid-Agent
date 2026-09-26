@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **Doctoral Research Portfolio & Ph.D. Applicant Project**  
-> **Applicant Focus:** AI for Energy Systems | Spatio-Temporal Graph Neural Networks | Smart Grid LLM Autonomous Agents  
+> **Research Interests:** AI for Energy Systems | Spatio-Temporal Graph Neural Networks | Dynamic Graph Learning | Time Series Forecasting | Deep Learning | AI4Science | Environmental Forecasting | Rainfall-Runoff / Hydrological Forecasting | Resource-Aware / Edge AI | Smart Grid LLM Autonomous Agents  
 > **Target Opportunity:** Ph.D. Admission & Research Assistantship (Prospective Supervisor Portfolio)
 
 ---
@@ -88,8 +88,14 @@ Beyond wind power forecasting, this research contributes to the broader Graph Ne
    - Coupling spatial wind power predictions with Dynamic Line Rating (DLR) algorithms to maximize transmission capacity without exceeding thermal conductor limits.
    - Autonomous wake steering: Deflecting wakes via active yaw offsets to maximize aggregate wind farm generation using Graph Reinforcement Learning.
 
-3. **Physics-Informed Machine Learning (SciML):**
+3. **Physics-Informed Machine Learning (SciML / AI4Science):**
    - Developing lightweight neural operator surrogates for Computational Fluid Dynamics (CFD) by embedding directional advection-diffusion priors into graph attention layers.
+
+4. **Rainfall-Runoff & Hydrological Forecasting:**
+   - Transferring dynamic directed graph formulations to river catchments and watershed stream gauge networks, modeling unidirectional runoff propagation, soil moisture dynamics, and flash flood peak arrival times under extreme meteorological events.
+
+5. **Resource-Aware & Edge AI Systems:**
+   - Designing pruned, quantized, and hardware-efficient dynamic graph operators that execute with sub-millisecond latency and minimal memory footprints on low-power industrial edge hardware (SCADA RTUs, embedded microcontrollers).
 
 ---
 
@@ -240,6 +246,10 @@ A core motivation for pursuing doctoral research is expanding `EdgeGridNet` from
    - Integrating spatial wind generation predictions with overhead transmission thermal equations, guided by an autonomous LLM agent that dynamically adjusts line ratings and manages battery energy storage dispatch in wholesale electricity markets.
 4. **Foundation Models for Multi-Modal Renewable Grids:**
    - Developing unified foundation architectures that jointly embed graph-structured sensor telemetry, meteorological satellite imagery, and unstructured regulatory grid codes.
+5. **Cross-Domain Hydrological & Environmental Forecasting (AI4Science):**
+   - Scaling dynamic spatio-temporal graph learning beyond wind energy to large-scale rainfall-runoff forecasting, catchment-level hydrological modeling, and flash-flood early warning by integrating gauge telemetry with digital elevation models and satellite precipitation feeds.
+6. **Resource-Aware Edge AI for Decentralized Sensor Networks:**
+   - Architecting ultra-lightweight dynamic GNN and agent architectures tailored for resource-constrained edge computing environments, enabling decentralized on-device forecasting, automated sensor calibration, and resilient offline edge control.
 
 ---
 
@@ -348,7 +358,7 @@ This repository serves as tangible evidence of doctoral readiness:
 * **Engineering & Scientific Rigor:** Designing end-to-end deep learning pipelines in PyTorch and PyTorch Geometric with 100% unit-tested code, checkpoint management, and custom loss formulations.
 * **Domain Physics Integration:** Translating fluid dynamic aerodynamic wake concepts (Jensen-Bastankhah analytical wake models) into neural message-passing kernels.
 * **Scientific Honesty:** Transparently analyzing bias-variance trade-offs (MAE vs. RMSE) and designing falsification controls (e.g., inverted wind direction) rather than presenting selective leaderboard claims.
-* **Forward-Looking Vision:** A concrete, high-impact Ph.D. research trajectory at the intersection of **Physics-Grounded GNNs, Smart Grid Operations, and Autonomous Multi-Agent LLMs**.
+* **Forward-Looking Vision:** A concrete, high-impact Ph.D. research trajectory bridging **Dynamic Graph Learning, Spatio-Temporal Time Series Forecasting, AI4Science (Energy & Hydrological Systems), Resource-Aware Edge AI, and Smart Grid Autonomous LLM Agents**.
 
 ---
 
